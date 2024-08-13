@@ -8,6 +8,9 @@ function App() {
   const todoTitleRef = useRef();
   const todoDescRef = useRef();
 
+  const editTodoTitleRef = useRef();
+  const editTodoDescRef = useRef();
+
   const filterTodoList = (keyword) => {
     switch (keyword) {
       case "done":
@@ -22,26 +25,36 @@ function App() {
     }
   };
 
-  const checkDuplicateTitle = (title) => {
-    if (todoList.filter((todo) => todo.title === title.trim()).length !== 0) {
+  const checkDuplicateTitle = (title, id) => {
+    if (id && todoList.filter((todo) => todo.id !== id && todo.title === title.trim()).length !== 0) {
+      return false;
+    } else if (!id && todoList.filter((todo) => todo.title === title.trim()).length !== 0) {
       return false;
     } else {
       return true;
     }
   };
 
-  const checkLength = (keyword, text) => {
+  const checkLength = (keyword, text, edit) => {
     switch (keyword) {
       case "title":
         if (text.length > 50) {
           alert("제목은 50글자까지 입력할 수 있습니다!");
-          todoTitleRef.current.value = text.slice(0, 51);
+          if (edit) {
+            editTodoTitleRef.current.value = text.slice(0, 51);
+          } else {
+            todoTitleRef.current.value = text.slice(0, 51);
+          }
         }
         break;
       case "desc":
         if (text.length > 200) {
           alert("내용은 200글자까지 입력할 수 있습니다!");
-          todoDescRef.current.value = text.slice(0, 201);
+          if (edit) {
+            editTodoDescRef.current.value = text.slice(0, 51);
+          } else {
+            todoDescRef.current.value = text.slice(0, 201);
+          }
         }
         break;
       default:
@@ -67,7 +80,16 @@ function App() {
       return;
     }
 
-    const newTodo = { id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1, title: title, desc: desc, done: false, date: changeDateFormat(new Date()), showDetail: false };
+    const newTodo = {
+      id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1,
+      title: title,
+      desc: desc,
+      done: false,
+      createdDate: changeDateFormat(new Date()),
+      updatedDate: changeDateFormat(new Date()),
+      showDetail: false,
+      onEdit: false,
+    };
     setTodoList([...todoList, newTodo]);
 
     todoTitleRef.current.value = "";
@@ -76,6 +98,28 @@ function App() {
 
   const toggleTodoShowDetail = (id) => {
     setTodoList(todoList.map((todo) => (todo.id === id ? { ...todo, showDetail: !todo.showDetail } : todo)));
+  };
+
+  const toggleTodoEditForm = (id) => {
+    setTodoList(todoList.map((todo) => (todo.id === id ? { ...todo, onEdit: !todo.onEdit } : { ...todo, onEdit: false })));
+  };
+
+  const EditTodo = (id, title, desc) => {
+    title = title.trim();
+    desc = desc.trim();
+
+    if (window.confirm("수정하시겠습니까?")) {
+      if (title === "") {
+        alert("제목을 입력해주세요!");
+        return;
+      }
+      if (!checkDuplicateTitle(title, id)) {
+        alert("중복된 제목이 있습니다!");
+        return;
+      }
+
+      setTodoList(todoList.map((todo) => (todo.id === id ? { ...todo, title: title, desc: desc, updatedDate: changeDateFormat(new Date()), onEdit: false } : todo)));
+    }
   };
 
   const deleteTodo = (id) => {
@@ -149,28 +193,65 @@ function App() {
               {filteredTodoList.map((todo) => {
                 return (
                   <li key={todo.id}>
-                    <input type="checkbox" name={todo.id} id={todo.id} checked={todo.done} onChange={() => toggleTodoDone(todo.id)} />
-                    <label htmlFor={todo.id}>{todo.title}</label>
-                    {todo.showDetail ? (
-                      <button type="button" onClick={() => toggleTodoShowDetail(todo.id)}>
-                        상세 닫기
-                      </button>
+                    {todo.onEdit ? (
+                      <>
+                        <label htmlFor="edit-todo-title">할 일 제목 수정 입력</label>
+                        <input
+                          type="text"
+                          id="edit-todo-title"
+                          ref={editTodoTitleRef}
+                          placeholder={"할 일 제목을 입력해주세요."}
+                          onChange={() => checkLength("title", editTodoTitleRef.current.value, "edit")}
+                          defaultValue={todo.title}
+                        />
+                        <label htmlFor="edit-todo-desc">할 일 내용 수정 입력</label>
+                        <input
+                          type="text"
+                          id="edit-todo-desc"
+                          ref={editTodoDescRef}
+                          placeholder={"할 일 내용을 입력해주세요."}
+                          onChange={() => checkLength("desc", editTodoDescRef.current.value, "edit")}
+                          defaultValue={todo.desc}
+                        />
+                        <button type="button" onClick={() => EditTodo(todo.id, editTodoTitleRef.current.value, editTodoDescRef.current.value)}>
+                          수정
+                        </button>
+                        <button type="button" onClick={() => toggleTodoEditForm(todo.id)}>
+                          취소
+                        </button>
+                      </>
                     ) : (
-                      <button type="button" onClick={() => toggleTodoShowDetail(todo.id)}>
-                        상세 보기
-                      </button>
+                      <>
+                        <input type="checkbox" name={todo.id} id={todo.id} checked={todo.done} onChange={() => toggleTodoDone(todo.id)} />
+                        <label htmlFor={todo.id}>{todo.title}</label>
+                        {todo.showDetail ? (
+                          <button type="button" onClick={() => toggleTodoShowDetail(todo.id)}>
+                            상세 닫기
+                          </button>
+                        ) : (
+                          <button type="button" onClick={() => toggleTodoShowDetail(todo.id)}>
+                            상세 보기
+                          </button>
+                        )}
+                        <button type="button" onClick={() => toggleTodoEditForm(todo.id)}>
+                          EDIT
+                        </button>
+                        <button type="button" onClick={() => deleteTodo(todo.id)}>
+                          DELETE
+                        </button>
+                        {todo.showDetail ? (
+                          <div>
+                            {todo.desc.length > 0 ? todo.desc : "상세 내용이 없습니다."}
+                            <br />
+                            <span>등록일: </span>
+                            {todo.createdDate}
+                            <br />
+                            <span>수정일: </span>
+                            {todo.updatedDate}
+                          </div>
+                        ) : null}
+                      </>
                     )}
-                    <button type="button" onClick={() => deleteTodo(todo.id)}>
-                      DELETE
-                    </button>
-                    {todo.showDetail ? (
-                      <div>
-                        {todo.desc.length > 0 ? todo.desc : "상세 내용이 없습니다."}
-                        <br />
-                        <span>등록일: </span>
-                        {todo.date}
-                      </div>
-                    ) : null}
                   </li>
                 );
               })}
