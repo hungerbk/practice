@@ -67,11 +67,15 @@ function App() {
       return;
     }
 
-    const newTodo = { id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1, title: title, desc: desc, done: false, date: changeDateFormat(new Date()) };
+    const newTodo = { id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1, title: title, desc: desc, done: false, date: changeDateFormat(new Date()), showDetail: false };
     setTodoList([...todoList, newTodo]);
 
     todoTitleRef.current.value = "";
     todoDescRef.current.value = "";
+  };
+
+  const toggleShowDetailTodo = (id) => {
+    setTodoList(todoList.map((todo) => (todo.id === id ? { ...todo, showDetail: !todo.showDetail } : todo)));
   };
 
   const deleteTodo = (id) => {
@@ -147,9 +151,25 @@ function App() {
                   <li key={todo.id}>
                     <input type="checkbox" name={todo.id} id={todo.id} checked={todo.done} onChange={() => toggleTodoDone(todo.id)} />
                     <label htmlFor={todo.id}>{todo.title}</label>
+                    {todo.showDetail ? (
+                      <button type="button" onClick={() => toggleShowDetailTodo(todo.id)}>
+                        상세 닫기
+                      </button>
+                    ) : (
+                      <button type="button" onClick={() => toggleShowDetailTodo(todo.id)}>
+                        상세 보기
+                      </button>
+                    )}
                     <button type="button" onClick={() => deleteTodo(todo.id)}>
                       DELETE
                     </button>
+                    {todo.showDetail ? (
+                      <div>
+                        {todo.desc}
+                        <br />
+                        {todo.date}
+                      </div>
+                    ) : null}
                   </li>
                 );
               })}
