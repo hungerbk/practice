@@ -165,8 +165,9 @@ function App() {
                     </button>
                     {todo.showDetail ? (
                       <div>
-                        {todo.desc}
+                        {todo.desc.length > 0 ? todo.desc : "상세 내용이 없습니다."}
                         <br />
+                        <span>등록일: </span>
                         {todo.date}
                       </div>
                     ) : null}
