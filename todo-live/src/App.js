@@ -74,7 +74,7 @@ function App() {
     todoDescRef.current.value = "";
   };
 
-  const toggleShowDetailTodo = (id) => {
+  const toggleTodoShowDetail = (id) => {
     setTodoList(todoList.map((todo) => (todo.id === id ? { ...todo, showDetail: !todo.showDetail } : todo)));
   };
 
@@ -152,11 +152,11 @@ function App() {
                     <input type="checkbox" name={todo.id} id={todo.id} checked={todo.done} onChange={() => toggleTodoDone(todo.id)} />
                     <label htmlFor={todo.id}>{todo.title}</label>
                     {todo.showDetail ? (
-                      <button type="button" onClick={() => toggleShowDetailTodo(todo.id)}>
+                      <button type="button" onClick={() => toggleTodoShowDetail(todo.id)}>
                         상세 닫기
                       </button>
                     ) : (
-                      <button type="button" onClick={() => toggleShowDetailTodo(todo.id)}>
+                      <button type="button" onClick={() => toggleTodoShowDetail(todo.id)}>
                         상세 보기
                       </button>
                     )}
