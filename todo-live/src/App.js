@@ -56,6 +56,12 @@ function App() {
     }
   };
 
+  const deleteDoneAll = () => {
+    if (window.confirm("완료한 할 일을 모두 삭제하시겠습니까?")) {
+      setTodoList(todoList.filter((todo) => todo.done !== true));
+    }
+  };
+
   const toggleTodoDone = (id) => {
     setTodoList(todoList.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)));
   };
@@ -93,6 +99,7 @@ function App() {
                 <button onClick={() => filterTodoList("incomplete")}>INCOMPLETE</button>
               </li>
             </ul>
+            <button onClick={deleteDoneAll}>완료한 할 일 전체 삭제</button>
             <ul>
               {filteredTodoList.map((todo) => {
                 return (
