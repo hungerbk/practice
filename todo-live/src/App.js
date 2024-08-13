@@ -158,7 +158,7 @@ function App() {
         <label htmlFor="todo-input-title">할 일 제목 입력</label>
         <input type="text" id="todo-input-title" ref={todoTitleRef} placeholder={"할 일 제목을 입력해주세요."} onChange={() => checkLength("title", todoTitleRef.current.value)} />
         <label htmlFor="todo-input-desc">할 일 내용 입력</label>
-        <input type="text" id="todo-input-desc" ref={todoDescRef} placeholder={"할 일 내용을 입력해주세요."} onChange={() => checkLength("title", todoDescRef.current.value)} />
+        <input type="text" id="todo-input-desc" ref={todoDescRef} placeholder={"할 일 내용을 입력해주세요."} onChange={() => checkLength("desc", todoDescRef.current.value)} />
         <button type="button" onClick={() => addTodo(todoTitleRef.current.value, todoDescRef.current.value)}>
           ADD
         </button>
