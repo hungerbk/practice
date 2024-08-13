@@ -34,12 +34,14 @@ function App() {
     switch (keyword) {
       case "title":
         if (text.length > 50) {
-          return false;
+          alert("제목은 50글자까지 입력할 수 있습니다!");
+          todoTitleRef.current.value = text.slice(0, 51);
         }
         break;
       case "desc":
         if (text.length > 200) {
-          return false;
+          alert("내용은 200글자까지 입력할 수 있습니다!");
+          todoDescRef.current.value = text.slice(0, 201);
         }
         break;
       default:
@@ -62,14 +64,6 @@ function App() {
     }
     if (!checkDuplicateTitle(title)) {
       alert("중복된 제목이 있습니다!");
-      return;
-    }
-    if (!checkLength("title", title)) {
-      alert("제목은 50글자까지 입력할 수 있습니다!");
-      return;
-    }
-    if (!checkLength("desc", desc)) {
-      alert("내용은 200글자까지 입력할 수 있습니다!");
       return;
     }
 
@@ -114,9 +108,9 @@ function App() {
     <div className="App">
       <section>
         <label htmlFor="todo-input-title">할 일 제목 입력</label>
-        <input type="text" id="todo-input-title" ref={todoTitleRef} placeholder={"할 일 제목을 입력해주세요."} />
+        <input type="text" id="todo-input-title" ref={todoTitleRef} placeholder={"할 일 제목을 입력해주세요."} onChange={() => checkLength("title", todoTitleRef.current.value)} />
         <label htmlFor="todo-input-desc">할 일 내용 입력</label>
-        <input type="text" id="todo-input-desc" ref={todoDescRef} placeholder={"할 일 내용을 입력해주세요."} />
+        <input type="text" id="todo-input-desc" ref={todoDescRef} placeholder={"할 일 내용을 입력해주세요."} onChange={() => checkLength("title", todoDescRef.current.value)} />
         <button type="button" onClick={() => addTodo(todoTitleRef.current.value, todoDescRef.current.value)}>
           ADD
         </button>
