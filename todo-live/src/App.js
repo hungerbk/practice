@@ -7,12 +7,16 @@ function App() {
   const todoTitleRef = useRef();
   const todoDescRef = useRef();
 
+  const changeDateFormat = (date: Date) => {
+    return date.getFullYear() + "-" + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)) + "-" + date.getDate();
+  };
+
   const addTodo = (title, desc) => {
     if (title.trim() === "") {
       alert("제목을 입력해주세요!");
       return;
     }
-    const newTodo = { id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1, title: title, desc: desc, done: false };
+    const newTodo = { id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1, title: title, desc: desc, done: false, date: changeDateFormat(new Date()) };
     setTodoList([...todoList, newTodo]);
 
     todoTitleRef.current.value = "";
