@@ -30,12 +30,33 @@ function App() {
     }
   };
 
+  const checkLength = (keyword, text) => {
+    switch (keyword) {
+      case "title":
+        if (text.length > 50) {
+          return false;
+        }
+        break;
+      case "desc":
+        if (text.length > 200) {
+          return false;
+        }
+        break;
+      default:
+        alert("체크할 keyword와 text를 올바르게 입력해주세요!");
+        break;
+    }
+  };
+
   const changeDateFormat = (date: Date) => {
     return date.getFullYear() + "-" + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)) + "-" + date.getDate();
   };
 
   const addTodo = (title, desc) => {
-    if (title.trim() === "") {
+    title = title.trim();
+    desc = desc.trim();
+
+    if (title === "") {
       alert("제목을 입력해주세요!");
       return;
     }
@@ -43,6 +64,15 @@ function App() {
       alert("중복된 제목이 있습니다!");
       return;
     }
+    if (!checkLength("title", title)) {
+      alert("제목은 50글자까지 입력할 수 있습니다!");
+      return;
+    }
+    if (!checkLength("desc", desc)) {
+      alert("내용은 200글자까지 입력할 수 있습니다!");
+      return;
+    }
+
     const newTodo = { id: todoList.length === 0 ? 1 : todoList[todoList.length - 1].id + 1, title: title, desc: desc, done: false, date: changeDateFormat(new Date()) };
     setTodoList([...todoList, newTodo]);
 
