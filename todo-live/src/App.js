@@ -1,5 +1,9 @@
 import "./App.css";
 import { useState, useRef, useEffect } from "react";
+import { changeDateFormat } from "./utils";
+import TodoListItem from "./components/TodoListItem";
+import { DeleteButtonList, FilterButtonList } from "./components/ButtonList";
+import TodoInput from "./components/TodoInput";
 
 function App() {
   const [todoList, setTodoList] = useState([]);
@@ -61,10 +65,6 @@ function App() {
         alert("체크할 keyword와 text를 올바르게 입력해주세요!");
         break;
     }
-  };
-
-  const changeDateFormat = (date: Date) => {
-    return date.getFullYear() + "-" + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)) + "-" + date.getDate();
   };
 
   const addTodo = (title, desc) => {
@@ -149,110 +149,37 @@ function App() {
 
   useEffect(() => {
     setFilteredTodoList(todoList);
-    console.log(todoList);
   }, [todoList]);
 
   return (
     <div className="App">
-      <section>
-        <label htmlFor="todo-input-title">할 일 제목 입력</label>
-        <input type="text" id="todo-input-title" ref={todoTitleRef} placeholder={"할 일 제목을 입력해주세요."} onChange={() => checkLength("title", todoTitleRef.current.value)} />
-        <label htmlFor="todo-input-desc">할 일 내용 입력</label>
-        <input type="text" id="todo-input-desc" ref={todoDescRef} placeholder={"할 일 내용을 입력해주세요."} onChange={() => checkLength("desc", todoDescRef.current.value)} />
-        <button type="button" onClick={() => addTodo(todoTitleRef.current.value, todoDescRef.current.value)}>
-          ADD
-        </button>
-      </section>
-
+      <h1>TODOLIST</h1>
+      <TodoInput checkLength={checkLength} addTodo={addTodo} todoTitleRef={todoTitleRef} todoDescRef={todoDescRef} />
       <section>
         {todoList.length === 0 ? (
           <span>할 일 목록이 비어있습니다. 할 일을 등록하세요!</span>
         ) : (
           <div>
-            <ul>
-              <li>
-                <button onClick={filterTodoList}>ALL</button>
-              </li>
-              <li>
-                <button onClick={() => filterTodoList("done")}>DONE</button>
-              </li>
-              <li>
-                <button onClick={() => filterTodoList("incomplete")}>INCOMPLETE</button>
-              </li>
-            </ul>
-            <ul>
-              <li>
-                <button onClick={deleteTodoList}>전체 삭제</button>
-              </li>
-              <li>
-                <button onClick={() => deleteTodoList("done")}>완료한 할 일 전체 삭제</button>
-              </li>
-            </ul>
+            <section className="button-list-section">
+              <FilterButtonList filterTodoList={filterTodoList} />
+              <DeleteButtonList deleteTodoList={deleteTodoList} />
+            </section>
 
             <ul>
               {filteredTodoList.map((todo) => {
                 return (
-                  <li key={todo.id}>
-                    {todo.onEdit ? (
-                      <>
-                        <label htmlFor="edit-todo-title">할 일 제목 수정 입력</label>
-                        <input
-                          type="text"
-                          id="edit-todo-title"
-                          ref={editTodoTitleRef}
-                          placeholder={"할 일 제목을 입력해주세요."}
-                          onChange={() => checkLength("title", editTodoTitleRef.current.value, "edit")}
-                          defaultValue={todo.title}
-                        />
-                        <label htmlFor="edit-todo-desc">할 일 내용 수정 입력</label>
-                        <input
-                          type="text"
-                          id="edit-todo-desc"
-                          ref={editTodoDescRef}
-                          placeholder={"할 일 내용을 입력해주세요."}
-                          onChange={() => checkLength("desc", editTodoDescRef.current.value, "edit")}
-                          defaultValue={todo.desc}
-                        />
-                        <button type="button" onClick={() => EditTodo(todo.id, editTodoTitleRef.current.value, editTodoDescRef.current.value)}>
-                          수정
-                        </button>
-                        <button type="button" onClick={() => toggleTodoEditForm(todo.id)}>
-                          취소
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <input type="checkbox" name={todo.id} id={todo.id} checked={todo.done} onChange={() => toggleTodoDone(todo.id)} />
-                        <label htmlFor={todo.id}>{todo.title}</label>
-                        {todo.showDetail ? (
-                          <button type="button" onClick={() => toggleTodoShowDetail(todo.id)}>
-                            상세 닫기
-                          </button>
-                        ) : (
-                          <button type="button" onClick={() => toggleTodoShowDetail(todo.id)}>
-                            상세 보기
-                          </button>
-                        )}
-                        <button type="button" onClick={() => toggleTodoEditForm(todo.id)}>
-                          EDIT
-                        </button>
-                        <button type="button" onClick={() => deleteTodo(todo.id)}>
-                          DELETE
-                        </button>
-                        {todo.showDetail ? (
-                          <div>
-                            {todo.desc.length > 0 ? todo.desc : "상세 내용이 없습니다."}
-                            <br />
-                            <span>등록일: </span>
-                            {todo.createdDate}
-                            <br />
-                            <span>수정일: </span>
-                            {todo.updatedDate}
-                          </div>
-                        ) : null}
-                      </>
-                    )}
-                  </li>
+                  <TodoListItem
+                    key={todo.id}
+                    todo={todo}
+                    checkLength={checkLength}
+                    EditTodo={EditTodo}
+                    toggleTodoShowDetail={toggleTodoShowDetail}
+                    toggleTodoEditForm={toggleTodoEditForm}
+                    deleteTodo={deleteTodo}
+                    toggleTodoDone={toggleTodoDone}
+                    editTodoTitleRef={editTodoTitleRef}
+                    editTodoDescRef={editTodoDescRef}
+                  />
                 );
               })}
             </ul>
