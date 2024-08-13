@@ -3,9 +3,24 @@ import { useState, useRef, useEffect } from "react";
 
 function App() {
   const [todoList, setTodoList] = useState([]);
+  const [filteredTodoList, setFilteredTodoList] = useState([]);
 
   const todoTitleRef = useRef();
   const todoDescRef = useRef();
+
+  const filterTodoList = (keyword) => {
+    switch (keyword) {
+      case "done":
+        setFilteredTodoList(todoList.filter((todo) => todo.done === true));
+        break;
+      case "incomplete":
+        setFilteredTodoList(todoList.filter((todo) => todo.done !== true));
+        break;
+      default:
+        setFilteredTodoList(todoList);
+        break;
+    }
+  };
 
   const changeDateFormat = (date: Date) => {
     return date.getFullYear() + "-" + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)) + "-" + date.getDate();
@@ -34,6 +49,7 @@ function App() {
   };
 
   useEffect(() => {
+    setFilteredTodoList(todoList);
     console.log(todoList);
   }, [todoList]);
 
@@ -49,23 +65,38 @@ function App() {
         </button>
       </section>
 
-      {todoList.length === 0 ? (
-        <span>할 일 목록이 비어있습니다. 할 일을 등록하세요!</span>
-      ) : (
-        <ul>
-          {todoList.map((todo) => {
-            return (
-              <li key={todo.id}>
-                <input type="checkbox" name={todo.id} id={todo.id} checked={todo.done} onChange={() => toggleTodoDone(todo.id)} />
-                <label htmlFor={todo.id}>{todo.title}</label>
-                <button type="button" onClick={() => deleteTodo(todo.id)}>
-                  DELETE
-                </button>
+      <section>
+        {todoList.length === 0 ? (
+          <span>할 일 목록이 비어있습니다. 할 일을 등록하세요!</span>
+        ) : (
+          <div>
+            <ul>
+              <li>
+                <button onClick={filterTodoList}>ALL</button>
               </li>
-            );
-          })}
-        </ul>
-      )}
+              <li>
+                <button onClick={() => filterTodoList("done")}>DONE</button>
+              </li>
+              <li>
+                <button onClick={() => filterTodoList("incomplete")}>INCOMPLETE</button>
+              </li>
+            </ul>
+            <ul>
+              {filteredTodoList.map((todo) => {
+                return (
+                  <li key={todo.id}>
+                    <input type="checkbox" name={todo.id} id={todo.id} checked={todo.done} onChange={() => toggleTodoDone(todo.id)} />
+                    <label htmlFor={todo.id}>{todo.title}</label>
+                    <button type="button" onClick={() => deleteTodo(todo.id)}>
+                      DELETE
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
