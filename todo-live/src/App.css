@@ -230,7 +230,8 @@ html {
   padding: 10px 0 5px 0;
   display: flex;
   flex-flow: column nowrap;
-  gap: 10px;
+  gap: 15px;
+  line-height: 1.5rem;
 }
 
 .todo-detail span {

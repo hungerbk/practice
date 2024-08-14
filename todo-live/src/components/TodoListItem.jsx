@@ -8,7 +8,7 @@ export default function TodoListItem({ todo, checkLength, EditTodo, toggleTodoSh
         <TodoEditForm todo={todo} editTodoTitleRef={editTodoTitleRef} editTodoDescRef={editTodoDescRef} checkLength={checkLength} EditTodo={EditTodo} toggleTodoEditForm={toggleTodoEditForm} />
       ) : (
         <>
-          <div className="todo-item-title">
+          <span className="todo-item-title">
             <span>
               <input type="checkbox" name={todo.id} id={todo.id} checked={todo.done} onChange={() => toggleTodoDone(todo.id)} />
               <label htmlFor={todo.id}>{todo.title}</label>
@@ -18,12 +18,15 @@ export default function TodoListItem({ todo, checkLength, EditTodo, toggleTodoSh
               <Button onClick={() => toggleTodoEditForm(todo.id)} text="EDIT" />
               <Button onClick={() => deleteTodo(todo.id)} text="DELETE" />
             </span>
-          </div>
+          </span>
           {todo.showDetail ? (
             <div className="todo-detail">
               {todo.desc.length > 0 ? todo.desc : "상세 내용이 없습니다."}
-              <span>등록일: {todo.createdDate}</span>
-              <span>수정일: {todo.updatedDate}</span>
+              <span>
+                등록일: {todo.createdDate}
+                <br />
+                수정일: {todo.updatedDate}
+              </span>
             </div>
           ) : null}
         </>
