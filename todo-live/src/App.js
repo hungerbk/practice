@@ -55,7 +55,7 @@ function App() {
         if (text.length > 200) {
           alert("내용은 200글자까지 입력할 수 있습니다!");
           if (edit) {
-            editTodoDescRef.current.value = text.slice(0, 51);
+            editTodoDescRef.current.value = text.slice(0, 201);
           } else {
             todoDescRef.current.value = text.slice(0, 201);
           }
